@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Random Cat</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: sans-serif;
+      padding: 2rem;
+      background-color: #f2f2f2;
+    }
+    img {
+      max-width: 90%;
+      max-height: 70vh;
+      border-radius: 8px;
+      margin-top: 1rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    input, button {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      margin: 0.3rem;
+      border-radius: 5px;
+    }
+    button {
+      border: none;
+      cursor: pointer;
+      background-color: #4CAF50;
+      color: white;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Random Cat</h1>
+  <input id="catText" type="text" placeholder="Type something for cat to say">
+  <button id="fetchCatBtn">Get Cat</button>
+  <img id="catImage" src="" alt="Your Cat Will Appear Here">
+
+  <script>
+    const img = document.getElementById("catImage");
+    const button = document.getElementById("fetchCatBtn");
+    const input = document.getElementById("catText");
+
+    async function fetchCat() {
+      try {
+        const text = input.value.trim();
+        let url = "/cat";
+        if (text) {
+          url = `/cat/says/${encodeURIComponent(text)}`;
+        }
+
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("Network response not ok");
+
+        const blob = await response.blob();
+        img.src = URL.createObjectURL(blob);
+      } catch (err) {
+        console.error("Failed to fetch cat:", err);
+        alert("Failed to fetch cat. Check console.");
+      }
+    }
+
+    button.addEventListener("click", fetchCat);
+
+    // Optional: fetch a cat on page load
+    fetchCat();
+  </script>
+
+</body>
+</html>
