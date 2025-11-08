@@ -42,22 +42,23 @@
 
   <h1>Random Cat</h1>
   <input id="catText" type="text" placeholder="Type something for cat to say">
-  <button id="fetchCatBtn">Get Cat</button>
+  <div>
+    <button id="fetchCatBtn">Get Cat</button>
+    <button id="fetchGifBtn">Get Cat GIF</button>
+    <button id="downloadBtn">Download</button>
+  </div>
   <img id="catImage" src="" alt="Your Cat Will Appear Here">
 
   <script>
     const img = document.getElementById("catImage");
-    const button = document.getElementById("fetchCatBtn");
+    const fetchCatBtn = document.getElementById("fetchCatBtn");
+    const fetchGifBtn = document.getElementById("fetchGifBtn");
+    const downloadBtn = document.getElementById("downloadBtn");
     const input = document.getElementById("catText");
 
-    async function fetchCat() {
+    // Helper to fetch and display image
+    async function fetchCat(url) {
       try {
-        const text = input.value.trim();
-        let url = "/cat";
-        if (text) {
-          url = `/cat/says/${encodeURIComponent(text)}`;
-        }
-
         const response = await fetch(url);
         if (!response.ok) throw new Error("Network response not ok");
 
@@ -69,10 +70,31 @@
       }
     }
 
-    button.addEventListener("click", fetchCat);
+    fetchCatBtn.addEventListener("click", () => {
+      const text = input.value.trim();
+      let url = "/cat";
+      if (text) url = `/cat/says/${encodeURIComponent(text)}`;
+      fetchCat(url);
+    });
+
+    fetchGifBtn.addEventListener("click", () => {
+      // Random GIF from CATAAS
+      fetchCat("/cat?type=gif");
+    });
+
+    downloadBtn.addEventListener("click", () => {
+      if (!img.src) return;
+      const a = document.createElement("a");
+      a.href = img.src;
+      const extension = img.src.includes(".gif") ? "gif" : "png";
+      a.download = `cat.${extension}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    });
 
     // Optional: fetch a cat on page load
-    fetchCat();
+    fetchCat("/cat");
   </script>
 
 </body>
